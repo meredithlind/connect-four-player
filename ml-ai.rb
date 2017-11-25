@@ -1,9 +1,9 @@
 #!/usr/bin/ruby -w
 # AI player for the game Connect Four written by Meredith Lind
 
- require 'json'
- @board = JSON.parse(ARGV[1])
-# @board = JSON.parse("[[1,0,0,0,0,0,0],[2,0,0,0,0,0,0],[1,0,0,0,0,0,0],[2,0,0,0,0,0,0],[2,2,0,0,0,0,0],[1,1,0,0,0,0,0]]")
+require 'json'
+@board = JSON.parse(ARGV[1])
+@player = ARGV[3]
 
 def is_valid?(y)
   get_next_opening(y) >= 0
@@ -35,22 +35,80 @@ def get_column(y)
   col
 end
 
-# puts "#{get_next_opening(0)}"
-# puts "#{is_valid?(0)}"
-# puts "#{get_next_opening(1)}"
-# puts "#{is_valid?(1)}"
-# puts "#{get_next_opening(2)}"
-# puts "#{get_next_opening(3)}"
-# puts "#{get_next_opening(4)}"
-# puts "#{get_next_opening(5)}"
-# puts "#{get_next_opening(6)}"
+def game_over?
+end
+
+def vertical_victory
+  row = 0
+  until row == 2 do
+    col = 0
+    until col == 6 do
+      if board[row][col] != 0 &&
+        board[row][col] == board[row+1][col] &&
+        board[row][col] == board[row+2][col] &&
+        board[row][col] == board[row+3][col]
+        return board[row][col]
+      end
+      col += 1
+    end
+    row += 1
+  end
+  return 0
+end
+
+def horizontal_victory
+  row = 0
+  until row == 5 do
+    col = 0
+    until col == 3 do
+      if board[row][col] != 0 &&
+        board[row][col] == board[row][col+1] &&
+        board[row][col] == board[row][col+2] &&
+        board[row][col] == board[row][col+3]
+        return board[row][col]
+      end
+      col += 1
+    end
+    row += 1
+  end
+  return 0
+end
+
+def diagonal_victory
+  col = 0
+  until col == 3 do
+    # Check for descending horizontal
+    row = 0
+    until row == 2 do
+      if board[row][col] != 0 &&
+        board[row][col] == board[row+1][col+1] &&
+        board[row][col] == board[row+2][col+2] &&
+        board[row][col] == board[row+3][col+3]
+        return board[row][col]
+      end
+      row += 1
+    end
+
+    # Check for ascending horizontal
+    row = 3
+    until row == 5 do
+      if board[row][col] != 0 &&
+        board[row][col] == board[row-1][col+1] &&
+        board[row][col] == board[row-2][col+2] &&
+        board[row][col] == board[row-3][col+3]
+        return board[row][col]
+      end
+      row += 1
+    end
+    col += 1
+  end
+  return 0
+end
 
 rand = rand(0...@board[0].size)
-puts"#{rand}"
 
 until is_valid?(rand)
   rand = rand(0...@board[0].size)
-  puts"#{rand}"
 end
 
 exit(rand)
